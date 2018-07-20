@@ -1,0 +1,59 @@
+Sub etablir_longueurs_auto()
+
+'etablir_longueurs_auto Macro
+'Activer l'onglet de travail
+  Sheets("Longueurs_csv").Activate
+
+'Compter le nombre de liens, puis appliquer la formule de mise en forme des longueurs pour chacun des liens
+  nb_liens = Range("A2").CurrentRegion.Rows.Count - 1
+  For i = 2 To nb_liens + 1
+  Range("E" & i).Select
+  ActiveCell.FormulaR1C1 = "=ROUNDUP(RC[-1]*1000,0)"
+  Next i
+
+'Insertion des colonnes "Spécialité" et "Type"
+  Columns("A:B").Select
+  Selection.Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+
+'Copie colonne "Type"
+  Columns ("E:E").Select
+  Selection.Copy
+  Columns("B:B").Select
+  ActiveSheet.Paste
+
+'Copie des valeurs du résultat des formules pour chaque lien
+  For i = 2 To nb_liens +1
+  Range("E" & i).Value = Range("G" & i).Value
+  Next i
+  Rows("1:1").Select
+  Application.CutCopyMode = False
+  Selection.Delete Shift:=xlUp
+  Columns("F:G").Select
+  Selection.Delete Shift:=xlToLeft
+  
+End Sub
+
+Sub prendre_nom_fichier()
+  nb_liens = Range("B1").CurrentRegion.Rows.Count
+  Dim chemin As String, pos1&, pos2&, lon&
+  chemin = ActiveWorkbook.Name
+  pos1 = InStr(chemin, ".")
+  chemin = Left(chemin, pos1 - 1)
+  pos2 = InStr(chmein, "_")
+  lon = Len(chemin)
+  chemin = Right(chemin, lon - pos2)
+  For i = 1 To nb_liens
+  Range("A" & i).Value = chemin
+  Next i
+End Sub
+
+Sub recup_longueurs()
+
+'recup_longueurs Macro
+'Chercher fichier(s) lenWires_xxx et l'ajouter en tant que nouvelle feuille dans le classeur actif
+
+  Dim fichiers As Variant
+  fichiers = Application.GetOpenFilename()
+  Workbooks.Open fichiers
+  
+End Sub
